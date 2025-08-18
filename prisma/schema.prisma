@@ -13,3 +13,73 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Pokemon {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  type1       Type     @default(NORMAL)
+  type2       Type? //null = monotipo  
+  height      Int //in CM
+  weight      Decimal  @db.Decimal(5, 2) //in kg
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  abilityId Int?
+  ability   Ability? @relation(fields: [abilityId], references: [id], onDelete: SetNull)
+  moves     Move[]
+
+  @@index([type1, type2])
+}
+
+model Move {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  description String?
+  type        Type          @default(NORMAL)
+  category    MoveCategory  @default(PHYSICAL)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  pokemons Pokemon[]
+
+  @@index([type])
+}
+
+model Ability {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pokemon Pokemon[]
+}
+
+enum Type {
+  BUG
+  DARK
+  DRAGON
+  ELECTRIC
+  FAIRY
+  FIGHTING
+  FIRE
+  FLYING
+  GHOST
+  GRASS
+  GROUND
+  ICE
+  NORMAL
+  POISON
+  PSYCHIC
+  ROCK
+  STEEL
+  WATER
+}
+
+enum MoveCategory {
+  PHYSICAL
+  SPECIAL
+  STATUS
+}
