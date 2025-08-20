@@ -22,7 +22,7 @@ export class PokemonService {
     async createPokemon(createPokemonDto: CreatePokemonDto): Promise<PokemonDto> {
         const pokemon = await this.pokemonRepository.findOneByName(createPokemonDto.name);
         if(pokemon){
-            throw new Error('Pokemon alredy exists');
+            throw new Error('Pokemon already exists');
         }
 
         const newPokemon = this.pokemonRepository.create(createPokemonDto);
