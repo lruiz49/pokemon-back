@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PokemonModule } from 'src/testPokemon/module/pokemon.module';
+import { PokemonModule } from 'src/pokemon/pokemon.module';
 
 @Module({
   imports: [PokemonModule],
