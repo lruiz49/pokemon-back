@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from "../dto/pokemon.dto";
 import { PokemonRepository } from "../repository/pokemon.repository";
 
@@ -14,25 +14,23 @@ export class PokemonService {
     async getPokemonById(id: number): Promise<PokemonDto> {
         const pokemon = await this.pokemonRepository.findOne(id);
         if(!pokemon){
-            throw new Error('Pokemon not found');
+            throw new NotFoundException('Pokemon not found');
         }
         return pokemon;
     }
 
     async createPokemon(createPokemonDto: CreatePokemonDto): Promise<PokemonDto> {
-        const pokemon = await this.pokemonRepository.findOneByName(createPokemonDto.name);
-        if(pokemon){
-            throw new Error('Pokemon already exists');
+        const pokemon = await this.pokemonRepository.create(createPokemonDto);
+        if(!pokemon){
+            throw new ConflictException('Pokemon already exists');
         }
-
-        const newPokemon = this.pokemonRepository.create(createPokemonDto);
-        return newPokemon;
+        return pokemon;
     }
 
     async updatePokemon(id: number, updatePokemonDto: UpdatePokemonDto): Promise<PokemonDto> {
         const pokemon = await this.pokemonRepository.findOne(id);
         if(!pokemon){
-            throw new Error('Pokemon not found');
+            throw new NotFoundException('Pokemon not found');
         }
         return await this.pokemonRepository.update(id, updatePokemonDto);
     }
@@ -40,7 +38,7 @@ export class PokemonService {
     async deletePokemon(id: number): Promise<void> {
         const pokemon = await this.pokemonRepository.findOne(id);
         if(!pokemon){
-            throw new Error('Pokemon not found');
+            throw new NotFoundException('Pokemon not found');
         }
         await this.pokemonRepository.delete(id);
     }

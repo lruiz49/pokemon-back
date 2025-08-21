@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { ApiNoContentResponse, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from '../dto/pokemon.dto';
 import { PokemonService } from '../service/pokemon.service';
@@ -26,7 +26,7 @@ export class PokemonController {
     description: 'Return a pokemon',
     type: [PokemonDto],
   })
-  async getPokemonById(@Param('id') id: number): Promise<PokemonDto> {
+  async getPokemonById(@Param('id',ParseIntPipe) id: number): Promise<PokemonDto> {
     return await this.pokemonService.getPokemonById(id);
   }
 
@@ -48,15 +48,15 @@ export class PokemonController {
     description: 'Update pokemon',
     type: [PokemonDto],
   })
-  async updatePokemon(@Param('id') id: number, @Body() updatePokemonDto: UpdatePokemonDto): Promise<PokemonDto> {
+  async updatePokemon(@Param('id', ParseIntPipe) id: number, @Body() updatePokemonDto: UpdatePokemonDto): Promise<PokemonDto> {
     return await this.pokemonService.updatePokemon(id, updatePokemonDto);
   }
 
   @Delete(':id')
   @ApiParam({ name: 'id', type: Number })
-  @ApiNoContentResponse({ description: 'Pokemon deleted successfully' })
+  @ApiNoContentResponse({ description: 'Pokemon deleted successfully' })  
   @HttpCode(204)
-  async deletePokemon(@Param('id') id: number): Promise<void> {
+  async deletePokemon(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return await this.pokemonService.deletePokemon(id);
   }
 }
