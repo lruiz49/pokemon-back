@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from "../dto/pokemon.dto";
 import { PokemonRepository } from "../repository/pokemon.repository";
+import { Type } from "@prisma/client";
 
 
 @Injectable()
@@ -27,11 +28,15 @@ export class PokemonService {
         return this.pokemonRepository.delete(id);
     }
 
-    async getAllByMoveId(moveId: number): Promise<PokemonDto[]> {
+    async getAllByMove(moveId: number): Promise<PokemonDto[]> {
         return this.pokemonRepository.findByMoveId(moveId);
     }
 
-    async getAllByAbilityId(abilityId: number): Promise<PokemonDto[]> {
+    async getAllByAbility(abilityId: number): Promise<PokemonDto[]> {
         return this.pokemonRepository.findByAbilityId(abilityId);
+    }
+
+    async getAllByType(type: Type): Promise<PokemonDto[]> {
+        return this.pokemonRepository.findByType(type);
     }
 }

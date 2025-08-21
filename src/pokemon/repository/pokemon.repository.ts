@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from "../dto/pokemon.dto";
+import { Type } from "@prisma/client";
 
 
 
@@ -39,5 +40,15 @@ export class PokemonRepository {
     async findByAbilityId(abilityId: number): Promise<PokemonDto[]> {
         return await this.prisma.pokemon.findMany({ where: { abilityId: abilityId } });
     }
-    
+
+    async findByType(type: Type): Promise<PokemonDto[]> {
+        return await this.prisma.pokemon.findMany({
+            where: {
+                OR: [
+                    { type1: type },
+                    { type2: type }
+                ] 
+            }
+        });
+    }
 }
