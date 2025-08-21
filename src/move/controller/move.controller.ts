@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Po
 import { ApiNoContentResponse, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { CreateMoveDto, MoveDto, UpdateMoveDto } from "../dto/move.dto";
 import { MoveService } from "../service/move.service";
-import { PokemonDto } from "src/pokemon/dto/pokemon.dto";
+import { MoveCategory, Type } from "@prisma/client";
 
 @Controller("move")
 export class MoveController {
@@ -13,7 +13,7 @@ export class MoveController {
     @ApiOperation({ summary: "Get all Moves" })
     @ApiResponse({
         status: 200,
-        description: 'Return all pokemons',
+        description: 'Return all moves',
         type: [MoveDto],
     })
     async getMoves(): Promise<MoveDto[]> {
@@ -44,11 +44,47 @@ export class MoveController {
     }
 
     @Delete(':id')
-      @ApiParam({ name: 'moveId', type: Number })
-      @ApiNoContentResponse({ description: 'Move deleted successfully' })
-      @HttpCode(204)
-      async deleteMove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    @ApiParam({ name: 'moveId', type: Number })
+    @ApiNoContentResponse({ description: 'Move deleted successfully' })
+    @HttpCode(204)
+    async deleteMove(@Param('id', ParseIntPipe) id: number): Promise<MoveDto> {
         return await this.moveService.deleteMove(id);
-      }
+    }
+
+    @Get(':id')
+    @ApiParam({ name: 'moveId', type: Number })
+    @ApiOperation({ summary: 'Get a move by ID' })
+    @ApiResponse({
+        status: 200,
+        description: 'Return a move',
+        type: MoveDto,
+    })
+    async getMoveById(@Param('id', ParseIntPipe) id: number): Promise<MoveDto> {
+        return await this.moveService.getMoveById(id);
+    }
+
+    @Get('type/:type')
+    @ApiParam({ name: 'type', type: String })
+    @ApiOperation({ summary: 'Get all moves of a specific type' })
+    @ApiResponse({
+        status: 200,
+        description: 'Return all moves of the specified type',
+        type: [MoveDto],
+    })
+    async getMovesByType(@Param('type') type: Type): Promise<MoveDto[]> {
+        return await this.moveService.getAllByType(type);
+    }
+
+    @Get('category/:category')
+    @ApiParam({ name: 'category', type: String })
+    @ApiOperation({ summary: 'Get all moves of a specific category' })
+    @ApiResponse({
+        status: 200,
+        description: 'Return all moves of the specified category',
+        type: [MoveDto],
+    })
+    async getMovesByCategory(@Param('category') category: MoveCategory): Promise<MoveDto[]> {
+        return await this.moveService.getAllByCategory(category);
+    }
 
 }

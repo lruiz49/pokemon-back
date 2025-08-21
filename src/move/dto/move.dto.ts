@@ -12,13 +12,12 @@ export class CreateMoveDto {
     @ApiPropertyOptional({ description: "Move description" })
     @IsOptional()
     @IsString()
-    description?: string;
+    description?: string | null;
 
     @ApiProperty({ description: "Move type", enum: Type, enumName: "Type" })
-    @IsOptional()
     @IsEnum(Type)
-    type?: Type;
-
+    type!: Type
+    
     @ApiProperty({ description: "Move category", enum: MoveCategory, enumName: "MoveCategory" })
     @IsEnum(MoveCategory)
     category!: MoveCategory;
