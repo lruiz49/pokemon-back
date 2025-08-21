@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConflictException, INestApplication, NotFoundException, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { PokemonController } from 'src/pokemon/controller/pokemon.controller';
 import { PokemonService } from 'src/pokemon/service/pokemon.service';
@@ -86,7 +86,7 @@ describe('PokemonController e2e with mocked service', () => {
 
     it('GET /pokemon/:id -> 404 when not found ', async () => {
 
-        serviceMock.getPokemonById.mockRejectedValue(new Error('Pokemon not found'));
+        serviceMock.getPokemonById.mockRejectedValue(new NotFoundException('Pokemon not found'));
 
         await request(app.getHttpServer()).get('/pokemon/999');
 
@@ -143,7 +143,7 @@ describe('PokemonController e2e with mocked service', () => {
             abilityId: null,
             moveIds: [1, 2],
         };
-        serviceMock.createPokemon.mockRejectedValue(new Error('Pokemon already exists'));
+        serviceMock.createPokemon.mockRejectedValue(new ConflictException('Pokemon already exists'));
 
         await request(app.getHttpServer())
             .post('/pokemon')
@@ -165,7 +165,7 @@ describe('PokemonController e2e with mocked service', () => {
     });
 
     it('PATCH /pokemon/:id -> 404 when not found', async () => {
-        serviceMock.updatePokemon.mockRejectedValue(new Error('Pokemon not found'));
+        serviceMock.updatePokemon.mockRejectedValue(new NotFoundException('Pokemon not found'));
 
         await request(app.getHttpServer())
             .patch('/pokemon/999')
@@ -179,7 +179,7 @@ describe('PokemonController e2e with mocked service', () => {
         await request(app.getHttpServer()).delete('/pokemon/7').expect(204);
     });
     it('DELETE /pokemon/:id -> 404 when not found', async () => {
-        serviceMock.deletePokemon.mockRejectedValue(new Error('Pokemon not found'));
+        serviceMock.deletePokemon.mockRejectedValue(new NotFoundException('Pokemon not found'));
 
         await request(app.getHttpServer())
             .delete('/pokemon/999')

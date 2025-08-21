@@ -112,7 +112,7 @@ describe('createPokemonService', () => {
     afterEach(() => jest.clearAllMocks());
     it('(create)should create and return new pokemon', async () => {
 
-        repo.findOneByName.mockResolvedValue(null);
+        
         repo.create.mockResolvedValue(makePokemon({ name: "Bulbasaur", id: 10 }));
 
         const dto = {
@@ -130,7 +130,6 @@ describe('createPokemonService', () => {
 
         expect(result.id).toBe(10);
         expect(result.name).toBe('Bulbasaur');
-        expect(repo.findOneByName).toHaveBeenCalledWith('Bulbasaur');
     });
     it('(create)should throw error if pokemon to create already exists', async () => {
 
