@@ -141,7 +141,7 @@ describe('PokemonController', () => {
     });
 
     it('DELETE /pokemon/:id -> deletes', async () => {
-        service.deletePokemon.mockResolvedValue(undefined);
+        service.deletePokemon.mockResolvedValue(makePokemon({ id: 7 }));
 
         await controller.deletePokemon(7);
 
