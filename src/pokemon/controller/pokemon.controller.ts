@@ -20,6 +20,7 @@ export class PokemonController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'pokemonId', type: Number })
   @ApiOperation({ summary: 'Get a pokemon by ID' })
   @ApiResponse({
     status: 200,
@@ -42,6 +43,7 @@ export class PokemonController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'pokemonId', type: Number })
   @ApiOperation({ summary: 'Update a pokemon by ID' })
   @ApiResponse({
     status: 200,
@@ -53,13 +55,15 @@ export class PokemonController {
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', type: Number })
+  @ApiParam({ name: 'pokemonId', type: Number })
   @ApiNoContentResponse({ description: 'Pokemon deleted successfully' })
   @HttpCode(204)
   async deletePokemon(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return await this.pokemonService.deletePokemon(id);
   }
+
   @Get('move/:id')
+  @ApiParam({ name: 'moveId', type: Number })
   @ApiOperation({ summary: 'Get all Pokémon with given move' })
   @ApiResponse({
     status: 200,
@@ -70,6 +74,7 @@ export class PokemonController {
     return this.pokemonService.getAllByMoveId(moveId);
   }
   @Get('ability/:id')
+  @ApiParam({ name: 'abilityId', type: Number })
   @ApiOperation({ summary: 'Get all Pokémon with given ability' })
   @ApiResponse({
     status: 200,
