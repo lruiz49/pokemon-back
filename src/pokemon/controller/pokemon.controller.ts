@@ -21,7 +21,6 @@ export class PokemonController {
   }
 
   @Get(':id')
-  @ApiParam({ name: 'pokemonId', type: Number })
   @ApiOperation({ summary: 'Get a pokemon by ID' })
   @ApiResponse({
     status: 200,
