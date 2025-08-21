@@ -22,7 +22,6 @@ async function bootstrap() {
     .setTitle('Pokemon api')
     .setDescription('Pokemon api to create pokemon, movements, abilities')
     .setVersion('1.0')
-    .addTag('pokemon')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);

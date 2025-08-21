@@ -1,45 +1,42 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from "../dto/pokemon.dto";
 import { PokemonRepository } from "../repository/pokemon.repository";
+import { Type } from "@prisma/client";
 
 
 @Injectable()
 export class PokemonService {
-    constructor(private readonly pokemonRepository: PokemonRepository) {}
+    constructor(private readonly pokemonRepository: PokemonRepository) { }
 
     async getAllPokemons(): Promise<PokemonDto[]> {
-        return await this.pokemonRepository.find();
+        return this.pokemonRepository.find();
     }
 
     async getPokemonById(id: number): Promise<PokemonDto> {
-        const pokemon = await this.pokemonRepository.findOne(id);
-        if(!pokemon){
-            throw new NotFoundException('Pokemon not found');
-        }
-        return pokemon;
+        return this.pokemonRepository.findOne(id);
     }
 
     async createPokemon(createPokemonDto: CreatePokemonDto): Promise<PokemonDto> {
-        const pokemon = await this.pokemonRepository.create(createPokemonDto);
-        if(!pokemon){
-            throw new ConflictException('Pokemon already exists');
-        }
-        return pokemon;
+        return this.pokemonRepository.create(createPokemonDto);
     }
 
     async updatePokemon(id: number, updatePokemonDto: UpdatePokemonDto): Promise<PokemonDto> {
-        const pokemon = await this.pokemonRepository.findOne(id);
-        if(!pokemon){
-            throw new NotFoundException('Pokemon not found');
-        }
-        return await this.pokemonRepository.update(id, updatePokemonDto);
+        return this.pokemonRepository.update(id, updatePokemonDto);
     }
 
-    async deletePokemon(id: number): Promise<void> {
-        const pokemon = await this.pokemonRepository.findOne(id);
-        if(!pokemon){
-            throw new NotFoundException('Pokemon not found');
-        }
-        await this.pokemonRepository.delete(id);
+    async deletePokemon(id: number): Promise<PokemonDto> {
+        return this.pokemonRepository.delete(id);
+    }
+
+    async getAllByMove(moveId: number): Promise<PokemonDto[]> {
+        return this.pokemonRepository.findByMoveId(moveId);
+    }
+
+    async getAllByAbility(abilityId: number): Promise<PokemonDto[]> {
+        return this.pokemonRepository.findByAbilityId(abilityId);
+    }
+
+    async getAllByType(type: Type): Promise<PokemonDto[]> {
+        return this.pokemonRepository.findByType(type);
     }
 }

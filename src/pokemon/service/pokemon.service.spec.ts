@@ -91,15 +91,6 @@ describe('getPokemonByIdService', () => {
         expect(result.name).toBe('Pikachu')
         expect(repo.findOne).toHaveBeenCalledWith(10);
     });
-    it('(getPokemonById)should throw error if pokemon not found', async () => {
-
-        repo.findOne.mockResolvedValue(null);
-
-        await expect(service.getPokemonById(99))
-            .rejects
-            .toThrow('Pokemon not found');
-
-    });
 });
 
 describe('createPokemonService', () => {
@@ -112,7 +103,7 @@ describe('createPokemonService', () => {
     afterEach(() => jest.clearAllMocks());
     it('(create)should create and return new pokemon', async () => {
 
-        
+
         repo.create.mockResolvedValue(makePokemon({ name: "Bulbasaur", id: 10 }));
 
         const dto = {
@@ -131,25 +122,6 @@ describe('createPokemonService', () => {
         expect(result.id).toBe(10);
         expect(result.name).toBe('Bulbasaur');
     });
-    it('(create)should throw error if pokemon to create already exists', async () => {
-
-        repo.findOneByName.mockResolvedValue(makePokemon({ name: "Bulbasaur" }));
-
-        const dto = {
-            name: 'Bulbasaur',
-            description: 'Seed',
-            type1: Type.GRASS,
-            height: 70,
-            weight: 6.9,
-            imageUrl: 'http://ex.com/bulba.png',
-            abilityId: null,
-            moveIds: [1, 2],
-        };
-
-        await expect(service.createPokemon(dto))
-            .rejects
-            .toThrow('Pokemon already exists');
-    });
 });
 
 describe('UpdatePokemonService', () => {
@@ -162,29 +134,16 @@ describe('UpdatePokemonService', () => {
     afterEach(() => jest.clearAllMocks());
     it('(update)should update pokemon and return new one ', async () => {
 
-        const existing = makePokemon({ id: 10, name: "Pikachu" });
         const updated = makePokemon({ id: 10, name: "Raichu" })
 
         const updateDto: Partial<UpdatePokemonDto> = { name: 'Raichu' };
 
-        repo.findOne.mockResolvedValue(existing);
         repo.update.mockResolvedValue(updated);
 
         const result = await service.updatePokemon(10, updateDto);
 
         expect(result.name).toBe('Raichu');
-        expect(repo.findOne).toHaveBeenCalledWith(10);
         expect(repo.update).toHaveBeenCalledWith(10, { name: 'Raichu' });
-    });
-    it('(update)should throw error if pokemon not found', async () => {
-
-        repo.findOne.mockResolvedValue(null);
-
-        const updateDto: Partial<UpdatePokemonDto> = { name: 'Juan' };
-
-        await expect(service.updatePokemon(10, updateDto))
-            .rejects
-            .toThrow('Pokemon not found');
     });
 });
 
@@ -198,19 +157,12 @@ describe('DeletePokemonService', () => {
     afterEach(() => jest.clearAllMocks());
     it('(delete)should delete a pokemon when it exists', async () => {
 
-        repo.findOne.mockResolvedValue(makePokemon({ id: 7, name: 'Squirtle' }));
-        repo.delete.mockResolvedValue(undefined);
+        repo.delete.mockResolvedValue(makePokemon({ id: 7, name: 'Squirtle' }));
 
-        await service.deletePokemon(7);
+        const result = await service.deletePokemon(7);
 
-        expect(repo.findOne).toHaveBeenCalledWith(7);
+        expect(result.name).toBe('Squirtle');
+        expect(result.id).toBe(7);
         expect(repo.delete).toHaveBeenCalledWith(7);
-    });
-    it('(delete)should throw error if pokemon not found', async () => {
-        repo.findOne.mockResolvedValue(null);
-
-        await expect(service.deletePokemon(10))
-            .rejects
-            .toThrow('Pokemon not found');
     });
 });

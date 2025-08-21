@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Po
 import { ApiNoContentResponse, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from '../dto/pokemon.dto';
 import { PokemonService } from '../service/pokemon.service';
+import { Type } from '@prisma/client';
 
 @Controller('pokemon')
 export class PokemonController {
@@ -20,13 +21,14 @@ export class PokemonController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'pokemonId', type: Number })
   @ApiOperation({ summary: 'Get a pokemon by ID' })
   @ApiResponse({
     status: 200,
     description: 'Return a pokemon',
     type: [PokemonDto],
   })
-  async getPokemonById(@Param('id',ParseIntPipe) id: number): Promise<PokemonDto> {
+  async getPokemonById(@Param('id', ParseIntPipe) id: number): Promise<PokemonDto> {
     return await this.pokemonService.getPokemonById(id);
   }
 
@@ -42,6 +44,7 @@ export class PokemonController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'pokemonId', type: Number })
   @ApiOperation({ summary: 'Update a pokemon by ID' })
   @ApiResponse({
     status: 200,
@@ -53,10 +56,45 @@ export class PokemonController {
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', type: Number })
-  @ApiNoContentResponse({ description: 'Pokemon deleted successfully' })  
+  @ApiParam({ name: 'pokemonId', type: Number })
+  @ApiNoContentResponse({ description: 'Pokemon deleted successfully', type: [PokemonDto] })
   @HttpCode(204)
-  async deletePokemon(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async deletePokemon(@Param('id', ParseIntPipe) id: number): Promise<PokemonDto> {
     return await this.pokemonService.deletePokemon(id);
+  }
+
+  @Get('move/:id')
+  @ApiParam({ name: 'moveId', type: Number })
+  @ApiOperation({ summary: 'Get all Pokémon with given move' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all Pokémon with the given move',
+    type: [PokemonDto],
+  })
+  async getPokemonByMove(@Param('id') moveId: number,): Promise<PokemonDto[]> {
+    return this.pokemonService.getAllByMove(moveId);
+  }
+  @Get('ability/:id')
+  @ApiParam({ name: 'abilityId', type: Number })
+  @ApiOperation({ summary: 'Get all Pokémon with given ability' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all Pokémon with the given ability',
+    type: [PokemonDto],
+  })
+  async getPokemonByAbility(@Param('id') abilityId: number,): Promise<PokemonDto[]> {
+    return this.pokemonService.getAllByAbility(abilityId);
+  }
+
+  @Get('type/:type')
+  @ApiParam({ name: 'type', type: String })
+  @ApiOperation({ summary: 'Get all Pokémon with given type' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all Pokémon with the given type',
+    type: [PokemonDto],
+  })
+  async getPokemonByType(@Param('type') type: Type): Promise<PokemonDto[]> {
+    return this.pokemonService.getAllByType(type);
   }
 }
