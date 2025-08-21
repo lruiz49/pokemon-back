@@ -24,11 +24,7 @@ export class PokemonService {
     }
 
     async createPokemon(createPokemonDto: CreatePokemonDto): Promise<PokemonDto> {
-        const pokemon = await this.pokemonRepository.create(createPokemonDto);
-        if (!pokemon) {
-            throw new ConflictException('Pokemon already exists');
-        }
-        return pokemon;
+        return await this.pokemonRepository.create(createPokemonDto);
     }
 
     async updatePokemon(id: number, updatePokemonDto: UpdatePokemonDto): Promise<PokemonDto> {

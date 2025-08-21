@@ -131,25 +131,6 @@ describe('createPokemonService', () => {
         expect(result.id).toBe(10);
         expect(result.name).toBe('Bulbasaur');
     });
-    it('(create)should throw error if pokemon to create already exists', async () => {
-
-        repo.findOneByName.mockResolvedValue(makePokemon({ name: "Bulbasaur" }));
-
-        const dto = {
-            name: 'Bulbasaur',
-            description: 'Seed',
-            type1: Type.GRASS,
-            height: 70,
-            weight: 6.9,
-            imageUrl: 'http://ex.com/bulba.png',
-            abilityId: null,
-            moveIds: [1, 2],
-        };
-
-        await expect(service.createPokemon(dto))
-            .rejects
-            .toThrow('Pokemon already exists');
-    });
 });
 
 describe('UpdatePokemonService', () => {
