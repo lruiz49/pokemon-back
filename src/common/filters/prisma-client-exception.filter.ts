@@ -23,6 +23,14 @@ export class PrismaClientExceptionFilter implements ExceptionFilter {
         status = 400;
         message = `Invalid reference: ${exception.meta?.field_name}`;
         break;
+      case 'P2025': // Record not found 
+        status = 404;
+        message = 'Resource not found';
+        break;
+      case 'P2001': // Where condition didn't match any records
+        status = 404;
+        message = 'No matching record found';
+        break;
       default:
         status = 500;
         message = exception.message;
