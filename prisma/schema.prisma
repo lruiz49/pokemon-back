@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -21,7 +20,7 @@ model Pokemon {
   type1       Type     @default(NORMAL)
   type2       Type? //null = monotipo  
   height      Int //in CM
-  weight      Decimal  @db.Decimal(5, 2) //in kg
+  weight      Float  //in kg
   imageUrl    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
