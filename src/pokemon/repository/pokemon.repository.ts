@@ -7,6 +7,9 @@ import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from "../dto/pokemon.d
 
 @Injectable()
 export class PokemonRepository {
+    findByAbilityId(abilityId: number): PokemonDto[] | PromiseLike<PokemonDto[]> {
+        throw new Error("Method not implemented.");
+    }  
     constructor(private prisma: PrismaService) { }
 
     async find(): Promise<PokemonDto[]> {
@@ -31,5 +34,9 @@ export class PokemonRepository {
 
     async findOneByName(name: string): Promise<PokemonDto | null> {
         return await this.prisma.pokemon.findUnique({ where: { name } });
+    }
+
+    async findByMoveId(moveId: number): Promise<PokemonDto[]> {
+        return await this.prisma.pokemon.findMany({ where: { moves: { some: { id: moveId } } } });
     }
 }

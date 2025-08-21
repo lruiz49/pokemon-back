@@ -26,7 +26,7 @@ export class PokemonController {
     description: 'Return a pokemon',
     type: [PokemonDto],
   })
-  async getPokemonById(@Param('id',ParseIntPipe) id: number): Promise<PokemonDto> {
+  async getPokemonById(@Param('id', ParseIntPipe) id: number): Promise<PokemonDto> {
     return await this.pokemonService.getPokemonById(id);
   }
 
@@ -54,9 +54,29 @@ export class PokemonController {
 
   @Delete(':id')
   @ApiParam({ name: 'id', type: Number })
-  @ApiNoContentResponse({ description: 'Pokemon deleted successfully' })  
+  @ApiNoContentResponse({ description: 'Pokemon deleted successfully' })
   @HttpCode(204)
   async deletePokemon(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return await this.pokemonService.deletePokemon(id);
+  }
+  @Get('move/:id')
+  @ApiOperation({ summary: 'Get all Pokémon with given move' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all Pokémon with the given move',
+    type: [PokemonDto],
+  })
+  async getPokemonByMove(@Param('id') moveId: number,): Promise<PokemonDto[]> {
+    return this.pokemonService.getAllByMoveId(moveId);
+  }
+  @Get('ability/:id')
+  @ApiOperation({ summary: 'Get all Pokémon with given ability' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all Pokémon with the given ability',
+    type: [PokemonDto],
+  })
+  async getPokemonByAbility(@Param('id') abilityId: number,): Promise<PokemonDto[]> {
+    return this.pokemonService.getAllByAbilityId(abilityId);
   }
 }

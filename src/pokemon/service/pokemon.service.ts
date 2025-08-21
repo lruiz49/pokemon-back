@@ -5,15 +5,19 @@ import { PokemonRepository } from "../repository/pokemon.repository";
 
 @Injectable()
 export class PokemonService {
-    constructor(private readonly pokemonRepository: PokemonRepository) {}
+    constructor(private readonly pokemonRepository: PokemonRepository) { }
 
     async getAllPokemons(): Promise<PokemonDto[]> {
-        return await this.pokemonRepository.find();
+        const result = await this.pokemonRepository.find();
+        if (!result) {
+            throw new NotFoundException('No Pokémon found');
+        }
+        return result;
     }
 
     async getPokemonById(id: number): Promise<PokemonDto> {
         const pokemon = await this.pokemonRepository.findOne(id);
-        if(!pokemon){
+        if (!pokemon) {
             throw new NotFoundException('Pokemon not found');
         }
         return pokemon;
@@ -21,7 +25,7 @@ export class PokemonService {
 
     async createPokemon(createPokemonDto: CreatePokemonDto): Promise<PokemonDto> {
         const pokemon = await this.pokemonRepository.create(createPokemonDto);
-        if(!pokemon){
+        if (!pokemon) {
             throw new ConflictException('Pokemon already exists');
         }
         return pokemon;
@@ -29,7 +33,7 @@ export class PokemonService {
 
     async updatePokemon(id: number, updatePokemonDto: UpdatePokemonDto): Promise<PokemonDto> {
         const pokemon = await this.pokemonRepository.findOne(id);
-        if(!pokemon){
+        if (!pokemon) {
             throw new NotFoundException('Pokemon not found');
         }
         return await this.pokemonRepository.update(id, updatePokemonDto);
@@ -37,9 +41,25 @@ export class PokemonService {
 
     async deletePokemon(id: number): Promise<void> {
         const pokemon = await this.pokemonRepository.findOne(id);
-        if(!pokemon){
+        if (!pokemon) {
             throw new NotFoundException('Pokemon not found');
         }
         await this.pokemonRepository.delete(id);
+    }
+
+    async getAllByMoveId(moveId: number): Promise<PokemonDto[]> {
+        const result = await this.pokemonRepository.findByMoveId(moveId);
+        if (!result) {
+            throw new NotFoundException('No Pokémon found with the given move');
+        }
+        return result;
+    }
+
+    async getAllByAbilityId(abilityId: number): Promise<PokemonDto[]> {
+        const result = await this.pokemonRepository.findByAbilityId(abilityId);
+        if (!result) {
+            throw new NotFoundException('No Pokémon found with the given ability');
+        }
+        return result;
     }
 }
