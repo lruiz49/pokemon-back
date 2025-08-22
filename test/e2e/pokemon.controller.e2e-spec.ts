@@ -39,6 +39,8 @@ function makePokemon(overrides: Partial<any> = {}) {
     moveIds: [],
     createdAt: now,
     updatedAt: now,
+    moves: [],
+    ability: null,
     ...overrides,
   };
 }

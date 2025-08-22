@@ -15,6 +15,8 @@ import {
 } from 'class-validator';
 import { Type as TransformType } from 'class-transformer';
 import { Type } from '@prisma/client';
+import { AbilityDto } from '../../ability/dto/ability.dto';
+import { MoveDto } from '../../move/dto/move.dto';
 
 export class CreatePokemonDto {
   @ApiProperty({ description: 'Pokemon name' })
@@ -91,6 +93,21 @@ export class PokemonDto extends CreatePokemonDto {
   @TransformType(() => Date)
   @IsDate()
   updatedAt!: Date;
+
+  @ApiPropertyOptional({ 
+    description: 'Pokemon ability', 
+    type: () => AbilityDto 
+  })
+  @IsOptional()
+  ability?: AbilityDto | null;
+
+  @ApiPropertyOptional({ 
+    description: 'Pokemon moves', 
+    type: [MoveDto] 
+  })
+  @IsOptional()
+  @IsArray()
+  moves?: MoveDto[];
 }
 
 export class UpdatePokemonDto extends PartialType(CreatePokemonDto) {}

@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { PokemonRepository } from '../../../src/pokemon/repository/pokemon.repository';
 import { PrismaService } from '../../../src/prisma/prisma.service';
-import { Type } from '@prisma/client';
+import { Type, MoveCategory } from '@prisma/client';
 import { CreatePokemonDto, UpdatePokemonDto, PaginatedResponseDto, PokemonDto } from '../../../src/pokemon/dto/pokemon.dto';
 
 function makePokemon(overrides: Partial<any> = {}) {
@@ -19,6 +19,8 @@ function makePokemon(overrides: Partial<any> = {}) {
     moveIds: [],
     createdAt: now,
     updatedAt: now,
+    moves: [],
+    ability: null,
     ...overrides,
   };
 }
@@ -53,14 +55,25 @@ describe('PokemonRepository', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('findOne', () => {
-    it('should return a pokemon by id', async () => {
-      const mockPokemon = makePokemon({ id: 1, name: 'Pikachu' });
+    it('should return a pokemon by id with relations', async () => {
+      const mockPokemon = makePokemon({ 
+        id: 1, 
+        name: 'Pikachu',
+        ability: { id: 1, name: 'Static', description: 'Ability desc' },
+        moves: [
+          { id: 1, name: 'Thunder Shock', type: Type.ELECTRIC, category: MoveCategory.PHYSICAL },
+          { id: 2, name: 'Quick Attack', type: Type.NORMAL, category: MoveCategory.PHYSICAL }
+        ]
+      });
       prisma.pokemon.findUniqueOrThrow.mockResolvedValue(mockPokemon);
 
       const result = await repository.findOne(1);
 
       expect(result).toEqual(mockPokemon);
-      expect(prisma.pokemon.findUniqueOrThrow).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(prisma.pokemon.findUniqueOrThrow).toHaveBeenCalledWith({ 
+        where: { id: 1 },
+        include: { moves: true, ability: true }
+      });
     });
   });
 
