@@ -4,7 +4,6 @@ import { PokemonController } from './controller/pokemon.controller';
 import { PokemonRepository } from './repository/pokemon.repository';
 import { PokemonService } from './service/pokemon.service';
 
-
 @Module({
   imports: [],
   controllers: [PokemonController],

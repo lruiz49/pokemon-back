@@ -4,8 +4,6 @@ import { MoveController } from './controller/move.controller';
 import { MoveRepository } from './repository/move.repository';
 import { MoveService } from './service/move.service';
 
-
-
 @Module({
   imports: [],
   controllers: [MoveController],

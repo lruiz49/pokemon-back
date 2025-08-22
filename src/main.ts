@@ -9,14 +9,15 @@ async function bootstrap() {
 
   app.useGlobalFilters(new PrismaClientExceptionFilter());
 
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    transformOptions: { enableImplicitConversion: true },
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    validationError: { target: false, value: false },
-
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      validationError: { target: false, value: false },
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Pokemon api')
@@ -25,7 +26,6 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-
 
   await app.listen(process.env.PORT ?? 3000);
 }

@@ -1,4 +1,8 @@
-import { INestApplication, ValidationPipe, NotFoundException } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+  NotFoundException,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { PokemonController } from 'src/pokemon/controller/pokemon.controller';
@@ -6,10 +10,11 @@ import { PokemonService } from 'src/pokemon/service/pokemon.service';
 import { PrismaClientExceptionFilter } from 'src/common/filters/prisma-client-exception.filter';
 import { Prisma, Type } from '@prisma/client';
 
-
 function prismaErr(code: 'P2002' | 'P2003', meta?: Record<string, any>) {
-
-  const e = new Prisma.PrismaClientKnownRequestError('prisma error', { code, clientVersion: 'test' } as any);
+  const e = new Prisma.PrismaClientKnownRequestError('prisma error', {
+    code,
+    clientVersion: 'test',
+  } as any);
   (e as any).code = code;
   (e as any).meta = meta;
   return e;
@@ -18,7 +23,6 @@ function prismaErr(code: 'P2002' | 'P2003', meta?: Record<string, any>) {
 describe('Pokemon e2e global and validations', () => {
   let app: INestApplication;
 
-  
   const serviceMock: jest.Mocked<PokemonService> = {
     getAllPokemons: jest.fn(),
     getPokemonById: jest.fn(),
@@ -58,7 +62,7 @@ describe('Pokemon e2e global and validations', () => {
   it('POST /pokemon invalid body -> 400 ', async () => {
     await request(app.getHttpServer())
       .post('/pokemon')
-      .send({ name: 'Squirtle', weight: 'oops', type1: 'WATER' }) 
+      .send({ name: 'Squirtle', weight: 'oops', type1: 'WATER' })
       .expect(400);
   });
 
@@ -78,7 +82,6 @@ describe('Pokemon e2e global and validations', () => {
       })
       .expect(409)
       .expect(({ body }) => {
-        
         expect(body.statusCode).toBe(409);
       });
   });
@@ -96,7 +99,7 @@ describe('Pokemon e2e global and validations', () => {
         height: 70,
         weight: 6.9,
         imageUrl: 'http://ex.com/bulba.png',
-        abilityId: 9999, 
+        abilityId: 9999,
       })
       .expect(400);
   });
