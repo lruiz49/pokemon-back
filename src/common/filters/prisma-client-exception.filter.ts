@@ -1,8 +1,4 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 @Catch(Prisma.PrismaClientKnownRequestError)
@@ -23,7 +19,7 @@ export class PrismaClientExceptionFilter implements ExceptionFilter {
         status = 400;
         message = `Invalid reference: ${exception.meta?.field_name}`;
         break;
-      case 'P2025': // Record not found 
+      case 'P2025': // Record not found
         status = 404;
         message = 'Resource not found';
         break;

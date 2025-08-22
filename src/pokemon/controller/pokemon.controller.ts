@@ -1,23 +1,62 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
-import { ApiNoContentResponse, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { CreatePokemonDto, PokemonDto, UpdatePokemonDto } from '../dto/pokemon.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiNoContentResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
+import {
+  CreatePokemonDto,
+  PokemonDto,
+  UpdatePokemonDto,
+  PaginationQueryDto,
+  PaginatedResponseDto,
+} from '../dto/pokemon.dto';
 import { PokemonService } from '../service/pokemon.service';
 import { Type } from '@prisma/client';
 
 @Controller('pokemon')
 export class PokemonController {
-  constructor(private readonly pokemonService: PokemonService) { }
-
+  constructor(private readonly pokemonService: PokemonService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all pokemons' })
+  @ApiOperation({ summary: 'Get all pokemons with pagination' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 10)',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Return all pokemons',
-    type: [PokemonDto],
+    description: 'Return paginated pokemons',
+    type: PaginatedResponseDto,
   })
-  async getPokemon(): Promise<PokemonDto[]> {
-    return await this.pokemonService.getAllPokemons();
+  async getPokemon(
+    @Query() pagination: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<PokemonDto>> {
+    return await this.pokemonService.getAllPokemonsPaginated(
+      pagination.page,
+      pagination.limit,
+    );
   }
 
   @Get(':id')
@@ -27,7 +66,9 @@ export class PokemonController {
     description: 'Return a pokemon',
     type: [PokemonDto],
   })
-  async getPokemonById(@Param('id', ParseIntPipe) id: number): Promise<PokemonDto> {
+  async getPokemonById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<PokemonDto> {
     return await this.pokemonService.getPokemonById(id);
   }
 
@@ -38,7 +79,9 @@ export class PokemonController {
     description: 'create pokemon',
     type: [PokemonDto],
   })
-  async createPokemon(@Body() createPokemonDto: CreatePokemonDto): Promise<PokemonDto> {
+  async createPokemon(
+    @Body() createPokemonDto: CreatePokemonDto,
+  ): Promise<PokemonDto> {
     return await this.pokemonService.createPokemon(createPokemonDto);
   }
 
@@ -50,50 +93,115 @@ export class PokemonController {
     description: 'Update pokemon',
     type: [PokemonDto],
   })
-  async updatePokemon(@Param('id', ParseIntPipe) id: number, @Body() updatePokemonDto: UpdatePokemonDto): Promise<PokemonDto> {
+  async updatePokemon(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePokemonDto: UpdatePokemonDto,
+  ): Promise<PokemonDto> {
     return await this.pokemonService.updatePokemon(id, updatePokemonDto);
   }
 
   @Delete(':id')
   @ApiParam({ name: 'pokemonId', type: Number })
-  @ApiNoContentResponse({ description: 'Pokemon deleted successfully', type: [PokemonDto] })
+  @ApiNoContentResponse({
+    description: 'Pokemon deleted successfully',
+    type: [PokemonDto],
+  })
   @HttpCode(204)
-  async deletePokemon(@Param('id', ParseIntPipe) id: number): Promise<PokemonDto> {
+  async deletePokemon(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<PokemonDto> {
     return await this.pokemonService.deletePokemon(id);
   }
 
   @Get('move/:id')
-  @ApiParam({ name: 'moveId', type: Number })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 10)',
+  })
   @ApiOperation({ summary: 'Get all Pokémon with given move' })
   @ApiResponse({
     status: 200,
-    description: 'Return all Pokémon with the given move',
-    type: [PokemonDto],
+    description: 'Return paginated Pokémon with the given move',
+    type: PaginatedResponseDto,
   })
-  async getPokemonByMove(@Param('id') moveId: number,): Promise<PokemonDto[]> {
-    return this.pokemonService.getAllByMove(moveId);
+  async getPokemonByMove(
+    @Param('id', ParseIntPipe) moveId: number,
+    @Query() pagination: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<PokemonDto>> {
+    return this.pokemonService.getAllByMovePaginated(
+      moveId,
+      pagination.page,
+      pagination.limit,
+    );
   }
   @Get('ability/:id')
-  @ApiParam({ name: 'abilityId', type: Number })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 10)',
+  })
   @ApiOperation({ summary: 'Get all Pokémon with given ability' })
   @ApiResponse({
     status: 200,
-    description: 'Return all Pokémon with the given ability',
-    type: [PokemonDto],
+    description: 'Return paginated Pokémon with the given ability',
+    type: PaginatedResponseDto,
   })
-  async getPokemonByAbility(@Param('id') abilityId: number,): Promise<PokemonDto[]> {
-    return this.pokemonService.getAllByAbility(abilityId);
+  async getPokemonByAbility(
+    @Param('id', ParseIntPipe) abilityId: number,
+    @Query() pagination: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<PokemonDto>> {
+    return this.pokemonService.getAllByAbilityPaginated(
+      abilityId,
+      pagination.page,
+      pagination.limit,
+    );
   }
 
   @Get('type/:type')
   @ApiParam({ name: 'type', type: String })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 10)',
+  })
   @ApiOperation({ summary: 'Get all Pokémon with given type' })
   @ApiResponse({
     status: 200,
-    description: 'Return all Pokémon with the given type',
-    type: [PokemonDto],
+    description: 'Return paginated Pokémon with the given type',
+    type: PaginatedResponseDto,
   })
-  async getPokemonByType(@Param('type') type: Type): Promise<PokemonDto[]> {
-    return this.pokemonService.getAllByType(type);
+  async getPokemonByType(
+    @Param('type') type: Type,
+    @Query() pagination: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<PokemonDto>> {
+    return this.pokemonService.getAllByTypePaginated(
+      type,
+      pagination.page,
+      pagination.limit,
+    );
   }
 }
